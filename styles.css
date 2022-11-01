@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&family=Poppins:ital,wght@1,200&display=swap');
+
+body {
+    font-family: 'Kanit', sans-serif;
+    background-color: skyblue;
+}
+
+#seleccionar-mascota {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.titulo { 
+    color: slateblue;
+    font-size:  50px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.subtitulo {
+    color: orangered;
+    font-size:  30px;
+}
+
+.tarjetas, tarjetas-ataques {
+    display: flex;
+    gap: 10px;
+}
+
+.tarjeta-de-pokemon {
+    width: 180px;
+    height: 100px;
+    background-color: aqua;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: red;
+}
+
+.tarjeta-de-pokemon img {
+    width: 50px;
+}
+
+#boton-mascota {
+    width: 180px;
+    height: 50px;
+    border-radius: 20px;
+    background: rosybrown;
+    border: 2px solid white;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 30px;
+}
+
+input:checked label {
+    background-color: hotpink;
+}
+
+input {
+    /* display: none; */
+}
+
+input:checked {
+    width: 80px;
+    
+}
+#seleccionar-ataque {
+    flex-direction: column;
+    align-items: center;
+}
+
+.boton-de-ataque {
+    background-color: orange;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border-color: transparent;
+    width: 100px;
+    color: white;
+    font-family: 'Kanit', sans-serif; 
+}
+
+#mensajes {
+    width: 280px;
+    background: slateblue;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+#boton-reiniciar {
+    border: black;
+    color: red;
+    font-family: 'Kanit', sans-serif;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+}
+
+.ataques-hechos {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    align-items: left;
+    color: blue;
+}
+
+#vidas-jugador, #vidas-enemigo {
+    font-size: 32px;
+    margin-bottom: 0;
+}
+
+.ataques-hechos-jugador, ataques-hechos-enemigo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 360px) {
+    .tarjetas, .tarjetas-ataques {
+        flex-direction: column;
+    }
+
+}
