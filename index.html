@@ -7,40 +7,40 @@
         <link rel="stylesheet" href="./styles.css">
     </head>
 
-
     <body>
         <section id="seleccionar-mascota">
-            <h1 class="titulo">POKEMON</h1> 
+            <h1 class="titulo">BATALLAS POKEMON</h1> 
             
-            <h2 class="subtitulo">Elige tu mascota:</h2>
+            <h2 class="subtitulo">Elige tu mascota pokemon:</h2>
 
             <div class="tarjetas">
+                <input type="radio" name="mascota" id="geodude" />
                 <label class= "tarjeta-de-pokemon" for="geodude">
                     <p>Geodude</p>
-                    <img src="./imagenesvarias/geodude.jpg " alt="Geodude">
+                    <img src="./imagenesvarias/geodude.jpeg " alt="Geodude">
                 </label>
-                <input type="radio" name="mascota" id="geodude" />
-    
+                
+                <input type="radio" name="mascota" id="squirtle" />
                 <label class= "tarjeta-de-pokemon" for="squirtle">
                     <p>Squirtle</p>
-                    <img src="./imagenesvarias/squirtle.jpg " alt="Squirtle">
+                    <img src="./imagenesvarias/squirtle.jpeg " alt="Squirtle">
                 </label>
-                <input type="radio" name="mascota" id="squirtle" />
                 
+                <input type="radio" name="mascota" id="charmander" />
                 <label class= "tarjeta-de-pokemon" for="charmander">
                     <p>Charmander</p>
                     <img src="./imagenesvarias/charmander.jpg " alt="Charmander">
                 </label>
-                <input type="radio" name="mascota" id="charmander" />
+                
             </div>
 
             <button id="boton-mascota">Seleccionar</button>
         </section>
 
         <section id="seleccionar-ataque">
-            <h1 class="titulo">POKEMON</h1> 
+            <h1 class="titulo">BATALLAS POKEMON</h1> 
 
-            <h2 class="subtitulo">Elige tu ataque:</h2>
+            <h2 class="subtitulo">Elige tu estilo de ataque:</h2>
 
             <div class="tarjetas-ataques">
                 <button id="boton-tierra" class="boton-de-ataque">Tierra 🥌</button>
@@ -61,14 +61,12 @@
                     <p id="vidas-jugador">3</p>
                     <p id="mascota-jugador"></p>
                     <div id="ataques-del-jugador"></div>
-                    
                 </div>
 
                 <div class="ataques-hechos-enemigo">
                     <p id="vidas-enemigo">3</p>
                     <p id="mascota-enemigo"></p>
                     <div id="ataques-del-enemigo"></div>
-                    
                 </div>
                 
             </div>
