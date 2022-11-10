@@ -20,14 +20,18 @@ const ataquesDelEnemigo = document.getElementById("ataques-del-enemigo")
 const contenedorTarjetas = document.getElementById("contenedorTarjetas")
 const contenedorAtaques = document.getElementById("contenedorAtaques")
 
+const sectionVerMapa = document.getElementById("ver-mapa")
+const mapa = document.getElementById("mapa")
+
 let pokemones = []
 let ataqueJugador = []
 let ataqueEnemigo = []
 let opcionDePokemones
-let inputGeodude 
+let inputBulbasaur 
 let inputSquirtle 
 let inputCharmander 
 let mascotaJugador
+let mascotaJugadorObjeto
 let ataquesPokemon
 let ataquesPokemonEnemigo 
 let botonFuego
@@ -40,23 +44,50 @@ let victoriasJugador = 0
 let victoriasEnemigo = 0
 let vidasJugador = 3
 let vidasEnemigo = 3
+let lienzo = mapa.getContext("2d")
+let intervalo
+let mapaBackground = new Image()
+mapaBackground.src = "./imagenesvarias/bosque.jpg"
 
 class Pokemon {
-    constructor(nombre, foto, vida) {       
+    constructor(nombre, foto, vida, fotoMapa, x = 10, y = 10)  {       
         this.nombre = nombre
         this.foto = foto
         this.vida = vida
         this.ataques = []
+        this.x = x
+        this.y = y
+        this.ancho = 40
+        this.alto = 40 
+        this.mapaFoto = new Image()
+        this.mapaFoto.src = fotoMapa
+        this.velocidadX = 0
+        this.velocidadY = 0
+    }
+    pintarPokemon() {
+        lienzo.drawImage(
+            this.mapaFoto, 
+            this.x,
+            this.y,
+            this.ancho,
+            this.alto,
+        )
     }
 }
 
-let geodude = new Pokemon ("Geodude", "./imagenesvarias/geodude.jpeg ", 5)
+let bulbasaur = new Pokemon ("Bulbasaur", "./imagenesvarias/bulbasaur.png ", 5, "./imagenesvarias/bulbasaurCara.png")
 
-let squirtle = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.jpeg ", 5)
+let squirtle = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.png ", 5, "./imagenesvarias/squirtleCara.png")
 
-let charmander = new Pokemon ("Charmander", "./imagenesvarias/charmander.jpg ", 5)
+let charmander = new Pokemon ("Charmander", "./imagenesvarias/charmander.png ", 5, "./imagenesvarias/charmanderCara.png")
 
-geodude.ataques.push(
+let bulbasaurEnemigo = new Pokemon ("Bulbasaur", "./imagenesvarias/bulbasaur.png ", 5, "./imagenesvarias/bulbasaurCara.png", 80, 120)
+
+let squirtleEnemigo = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.png ", 5, "./imagenesvarias/squirtleCara.png", 150, 95)
+
+let charmanderEnemigo = new Pokemon ("Charmander", "./imagenesvarias/charmander.png ", 5, "./imagenesvarias/charmanderCara.png", 200, 190)
+
+bulbasaur.ataques.push(
     {nombre: "🥌", id: "boton-tierra"},
     {nombre: "🥌", id: "boton-tierra"},
     {nombre: "🥌", id: "boton-tierra"},
@@ -80,11 +111,12 @@ charmander.ataques.push(
     {nombre: "🥌", id: "boton-tierra"},
 )
 
-pokemones.push(geodude, squirtle, charmander)
+pokemones.push(bulbasaur, squirtle, charmander)
 
 function iniciarJuego(){
 
     sectionSeleccionarAtaque.style.display = "none"
+    sectionVerMapa.style.display = "none"
 
     pokemones.forEach((pokemon) => {
         opcionDePokemones = `<input type="radio" name="mascota" id=${pokemon.nombre} />
@@ -93,7 +125,7 @@ function iniciarJuego(){
             <img src=${pokemon.foto} alt=${pokemon.nombre}>
         </label>` 
     contenedorTarjetas.innerHTML += opcionDePokemones
-    inputGeodude = document.getElementById("Geodude")
+    inputBulbasaur = document.getElementById("Bulbasaur")
     inputSquirtle = document.getElementById("Squirtle")
     inputCharmander = document.getElementById("Charmander")
 
@@ -106,11 +138,11 @@ function iniciarJuego(){
 
 function seleccionarMascotaJugador(){
     sectionSeleccionarMascota.style.display = "none"
-    sectionSeleccionarAtaque.style.display = "flex"
+    //sectionSeleccionarAtaque.style.display = "flex"
 
-    if(inputGeodude.checked) {
-        spanMascotaJugador.innerHTML = inputGeodude.id
-        mascotaJugador = inputGeodude.id
+    if(inputBulbasaur.checked) {
+        spanMascotaJugador.innerHTML = inputBulbasaur.id
+        mascotaJugador = inputBulbasaur.id
     } else if(inputSquirtle.checked) {
         spanMascotaJugador.innerHTML = inputSquirtle.id
         mascotaJugador = inputSquirtle.id
@@ -121,6 +153,8 @@ function seleccionarMascotaJugador(){
         alert("selecciona una mascota")
     }
     extraerAtaques(mascotaJugador)
+    sectionVerMapa.style.display = "flex"
+    iniciarMapa()
     seleccionarMascotaEnemigo()
 }
 
@@ -128,7 +162,7 @@ function extraerAtaques(mascotaJugador) {
     let ataques 
     for (let i = 0; i < pokemones.length; i++) {
         if (mascotaJugador === pokemones[i].nombre){
-        ataques = pokemones[i].ataques
+            ataques = pokemones[i].ataques
         }
     }
     mostrarAtaques(ataques)
@@ -172,30 +206,30 @@ function secuenciaAtaque() {
 function seleccionarMascotaEnemigo(){
     let mascotaAleatoria = aleatorio(0, pokemones.length - 1)
     
-    spanMascotaEnemigo.innerHTML = pokemones [mascotaAleatoria].nombre
-    ataquesPokemonEnemigo = pokemones [mascotaAleatoria].ataques
+    spanMascotaEnemigo.innerHTML = pokemones[mascotaAleatoria].nombre
+    ataquesPokemonEnemigo = pokemones[mascotaAleatoria].ataques
     secuenciaAtaque()
 }
 
-function ataqueAleatorioEnemigo(){
+function ataqueAleatorioEnemigo() {
     let ataqueAleatorio = aleatorio(0, ataquesPokemonEnemigo.length - 1)
 
-    if(ataqueAleatorio == 0 || ataqueAleatorio == 1) {
+    if (ataqueAleatorio == 0 || ataqueAleatorio == 1) {
         ataqueEnemigo.push("Tierra")
-    } else if(ataqueAleatorio == 3 || ataqueAleatorio == 4) {
+    } else if (ataqueAleatorio == 3 || ataqueAleatorio == 4) {
         ataqueEnemigo.push("Agua")
     } else {
         ataqueEnemigo.push("Fuego")
     }
-
     iniciarPelea ()
 }
 
 function iniciarPelea () {
-    if(ataqueJugador.length === 5){
+    if (ataqueJugador.length === 5) {
         combate()
     }
 }
+
 function indexAmbosOponentes (jugador, enemigo) {
     indexAtaqueJugador = ataqueJugador[jugador]
     indexAtaqueEnemigo = ataqueEnemigo[enemigo]
@@ -207,25 +241,25 @@ function combate(){
     for (let index = 0; index < ataqueJugador.length; index++) {
         if (ataqueJugador[index] === ataqueEnemigo[index]) {
             indexAmbosOponentes (index, index)
-            crearMensaje("Empate⁉")
+            crearMensaje("Empate 🤦‍♂️")
         } else if (ataqueJugador[index] === "Tierra" && ataqueEnemigo[index] === "Fuego") {
             indexAmbosOponentes (index, index)
-            crearMensaje("Ganaste✔")
+            crearMensaje("Ganaste ✔")
             victoriasJugador++
-            spanVidasJugador.innerHTML = vidasJugador
+            spanVidasJugador.innerHTML = victoriasJugador
         } else if (ataqueJugador[index] == "Agua" && ataqueEnemigo[index] == "Fuego") {
             indexAmbosOponentes (index, index)
-            crearMensaje("Ganaste✔")
+            crearMensaje("Ganaste ✔")
             victoriasJugador++
-            spanVidasJugador.innerHTML = vidasJugador 
+            spanVidasJugador.innerHTML = victoriasJugador 
         } else if (ataqueJugador[index] == "Agua" && ataqueEnemigo[index] == "Tierra") {
             indexAmbosOponentes (index, index)
-            crearMensaje("Ganaste✔")
+            crearMensaje("Ganaste ✔")
             victoriasJugador++
-            spanVidasJugador.innerHTML = vidasJugador
+            spanVidasJugador.innerHTML = victoriasJugador
         } else {
             indexAmbosOponentes (index, index)
-            crearMensaje("Perdiste❌")
+            crearMensaje("Perdiste ❌")
             victoriasEnemigo++
             spanVidasEnemigo.innerHTML = victoriasEnemigo
         }
@@ -234,9 +268,9 @@ function combate(){
 }
 
 function revisarVidas(){
-    if (victoriasJugador === victoriasEnemigo ){
+    if (victoriasJugador === victoriasEnemigo) {
         crearMensajeFinal("IT'S A DRAW!!!🤝🤝")
-    } else if (victoriasJugador > victoriasEnemigo){
+    } else if (victoriasJugador > victoriasEnemigo) {
         crearMensajeFinal("YOU WIN!!!🏆🏆🏆")
     } else {
         crearMensajeFinal("YOU LOSE!!!💫💥💢")
@@ -263,7 +297,7 @@ function crearMensajeFinal(resultadoFinal){
     sectionReiniciar.style.display = "block"
 }
 
-function reiniciarJuego(){
+function reiniciarJuego() {
     location.reload()
 }
 
@@ -271,6 +305,104 @@ function aleatorio(Min, Max) {
     Min = Math.ceil(Min)
     Max = Math.floor(Max)
     return Math.floor(Math.random() * (Max - Min + 1) + Min)
+}
+
+function pintarCanvas() {
+
+    mascotaJugadorObjeto.x = mascotaJugadorObjeto.x + mascotaJugadorObjeto.velocidadX
+    mascotaJugadorObjeto.y = mascotaJugadorObjeto.y + mascotaJugadorObjeto.velocidadY
+    lienzo.clearRect(0, 0, mapa.width, mapa.height)
+    lienzo.drawImage(
+        mapaBackground,
+        0,
+        0,
+        mapa.width,
+        mapa.height
+    )
+    mascotaJugadorObjeto.pintarPokemon()
+    bulbasaurEnemigo.pintarPokemon()
+    squirtleEnemigo.pintarPokemon()
+    charmanderEnemigo.pintarPokemon()
+
+    if (mascotaJugadorObjeto.velocidadX !== 0 || mascotaJugadorObjeto.velocidadY !== 0) {
+        revisarColision(bulbasaurEnemigo, squirtleEnemigo, charmanderEnemigo)
+    }
+}
+
+function moverDerecha() {
+    mascotaJugadorObjeto.velocidadX = 5
+}
+
+function moverArriba() {
+    mascotaJugadorObjeto.velocidadY = - 5
+}
+
+function moverIzquierda() {
+    mascotaJugadorObjeto.velocidadX = - 5
+}
+
+function moverAbajo() {
+    mascotaJugadorObjeto.velocidadY = 5
+}
+
+function detenerMovimiento() {
+    mascotaJugadorObjeto.velocidadX = 0
+    mascotaJugadorObjeto.velocidadY = 0
+}
+
+function sePresionoUnaTecla(event) {
+    switch (event.key) {
+        case "ArrowUp" :
+            moverArriba()
+            break
+        case "ArrowDown" :
+            moverAbajo()
+            break
+        case "ArrowRight" :
+            moverDerecha()
+            break
+        case "ArrowLeft" :
+            moverIzquierda()
+            break
+        default :
+            break
+    }
+}
+
+function iniciarMapa() {
+
+    mapa.width = 400
+    mapa.height = 260
+    mascotaJugadorObjeto = obtenerObjetoMascota(mascotaJugador)
+    intervalo = setInterval(pintarCanvas, 50)
+    window.addEventListener("keydown", sePresionoUnaTecla)
+    window.addEventListener("keyup", detenerMovimiento)
+}
+
+function obtenerObjetoMascota() {
+    for (let i = 0; i < pokemones.length; i++) {
+        if (mascotaJugador === pokemones[i].nombre) {
+            return pokemones[i]
+        }
+    }
+}
+
+function revisarColision(enemigo) {
+    const arribaEnemigo = enemigo.y
+    const abajoEnemigo = enemigo.y + enemigo.alto
+    const derechaEnemigo = enemigo.x + enemigo.ancho
+    const izquierdaEnemigo = enemigo.x 
+    
+    const arribaMascota = mascotaJugadorObjeto.y
+    const abajoMascota = mascotaJugadorObjeto.y + mascotaJugadorObjeto.alto
+    const derechaMascota = mascotaJugadorObjeto.x + mascotaJugadorObjeto.ancho
+    const izquierdaMascota = mascotaJugadorObjeto.x 
+    
+    if (abajoMascota < arribaEnemigo || arribaMascota > abajoEnemigo || derechaMascota < izquierdaEnemigo || izquierdaMascota > derechaEnemigo ||) {
+        return
+    }
+    detenerMovimiento()
+    alert("hay colision" + enemigo.nombre)
 }
 
 window.addEventListener("load", iniciarJuego)
