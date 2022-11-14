@@ -48,17 +48,29 @@ let lienzo = mapa.getContext("2d")
 let intervalo
 let mapaBackground = new Image()
 mapaBackground.src = "./imagenesvarias/bosque.jpg"
+let alturaQueBuscamos
+let anchoDelMapa = window.innerWidth - 20
+const anchoMaximoDelMapa = 350
+
+if ( anchoDelMapa > anchoMaximoDelMapa ) {
+    anchoDelMapa = anchoMaximoDelMapa - 20 
+}
+
+alturaQueBuscamos = anchoDelMapa * 600 / 800 
+
+mapa.width = anchoDelMapa
+mapa.height = alturaQueBuscamos 
 
 class Pokemon {
-    constructor(nombre, foto, vida, fotoMapa, x = 10, y = 10)  {       
+    constructor(nombre, foto, vida, fotoMapa)  {       
         this.nombre = nombre
         this.foto = foto
         this.vida = vida
         this.ataques = []
-        this.x = x
-        this.y = y
         this.ancho = 40
         this.alto = 40 
+        this.x = aleatorio(0, mapa.width - this.ancho)
+        this.y = aleatorio(0, mapa.height - this.alto)
         this.mapaFoto = new Image()
         this.mapaFoto.src = fotoMapa
         this.velocidadX = 0
@@ -81,11 +93,11 @@ let squirtle = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.png ", 5, "./
 
 let charmander = new Pokemon ("Charmander", "./imagenesvarias/charmander.png ", 5, "./imagenesvarias/charmanderCara.png")
 
-let bulbasaurEnemigo = new Pokemon ("Bulbasaur", "./imagenesvarias/bulbasaur.png ", 5, "./imagenesvarias/bulbasaurCara.png", 80, 120)
+let bulbasaurEnemigo = new Pokemon ("Bulbasaur", "./imagenesvarias/bulbasaur.png ", 5, "./imagenesvarias/bulbasaurCara.png")
 
-let squirtleEnemigo = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.png ", 5, "./imagenesvarias/squirtleCara.png", 150, 95)
+let squirtleEnemigo = new Pokemon ("Squirtle", "./imagenesvarias/squirtle.png ", 5, "./imagenesvarias/squirtleCara.png")
 
-let charmanderEnemigo = new Pokemon ("Charmander", "./imagenesvarias/charmander.png ", 5, "./imagenesvarias/charmanderCara.png", 200, 190)
+let charmanderEnemigo = new Pokemon ("Charmander", "./imagenesvarias/charmander.png ", 5, "./imagenesvarias/charmanderCara.png")
 
 bulbasaur.ataques.push(
     {nombre: "🥌", id: "boton-tierra"},
@@ -104,6 +116,30 @@ squirtle.ataques.push(
 )
 
 charmander.ataques.push(
+    {nombre: "🔥", id: "boton-fuego"},
+    {nombre: "🔥", id: "boton-fuego"},
+    {nombre: "🔥", id: "boton-fuego"},
+    {nombre: "💧", id: "boton-agua"},
+    {nombre: "🥌", id: "boton-tierra"},
+)
+
+bulbasaurEnemigo.ataques.push(
+    {nombre: "🥌", id: "boton-tierra"},
+    {nombre: "🥌", id: "boton-tierra"},
+    {nombre: "🥌", id: "boton-tierra"},
+    {nombre: "💧", id: "boton-agua"},
+    {nombre: "🔥", id: "boton-fuego"},
+)
+
+squirtleEnemigo.ataques.push(
+    {nombre: "💧", id: "boton-agua"},
+    {nombre: "💧", id: "boton-agua"},
+    {nombre: "💧", id: "boton-agua"},
+    {nombre: "🥌", id: "boton-tierra"},
+    {nombre: "🔥", id: "boton-fuego"},
+)
+
+charmanderEnemigo.ataques.push(
     {nombre: "🔥", id: "boton-fuego"},
     {nombre: "🔥", id: "boton-fuego"},
     {nombre: "🔥", id: "boton-fuego"},
@@ -138,8 +174,7 @@ function iniciarJuego(){
 
 function seleccionarMascotaJugador(){
     sectionSeleccionarMascota.style.display = "none"
-    //sectionSeleccionarAtaque.style.display = "flex"
-
+    
     if(inputBulbasaur.checked) {
         spanMascotaJugador.innerHTML = inputBulbasaur.id
         mascotaJugador = inputBulbasaur.id
@@ -155,7 +190,7 @@ function seleccionarMascotaJugador(){
     extraerAtaques(mascotaJugador)
     sectionVerMapa.style.display = "flex"
     iniciarMapa()
-    seleccionarMascotaEnemigo()
+    
 }
 
 function extraerAtaques(mascotaJugador) {
@@ -370,9 +405,6 @@ function sePresionoUnaTecla(event) {
 }
 
 function iniciarMapa() {
-
-    mapa.width = 400
-    mapa.height = 260
     mascotaJugadorObjeto = obtenerObjetoMascota(mascotaJugador)
     intervalo = setInterval(pintarCanvas, 50)
     window.addEventListener("keydown", sePresionoUnaTecla)
@@ -398,11 +430,19 @@ function revisarColision(enemigo) {
     const derechaMascota = mascotaJugadorObjeto.x + mascotaJugadorObjeto.ancho
     const izquierdaMascota = mascotaJugadorObjeto.x 
     
-    if (abajoMascota < arribaEnemigo || arribaMascota > abajoEnemigo || derechaMascota < izquierdaEnemigo || izquierdaMascota > derechaEnemigo ||) {
+    if ( abajoMascota < arribaEnemigo || 
+        arribaMascota > abajoEnemigo || 
+        derechaMascota < izquierdaEnemigo || 
+        izquierdaMascota > derechaEnemigo 
+        ) {
         return
-    }
+        }
+
     detenerMovimiento()
-    alert("hay colision" + enemigo.nombre)
+    clearInterval(intervalo)
+    sectionSeleccionarAtaque.style.display = "flex"
+    sectionVerMapa.style.display = "none"
+    seleccionarMascotaEnemigo(enemigo)
 }
 
 window.addEventListener("load", iniciarJuego)

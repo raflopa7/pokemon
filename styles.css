@@ -91,6 +91,7 @@ input:checked + label {
     align-items: center;
     flex-direction: column;
 }
+
 #boton-reiniciar {
     border: black;
     color: black;
@@ -122,15 +123,29 @@ input:checked + label {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
 }
 
-#mapa {
+#ver-mapa button {
+    width: 80px;
+    height: 40px;
+    border-radius: 20px;
+    background: orangered;
     border: 2px solid white;
-
+    color: black;
+    font-family: 'Kanit', sans-serif;
+    margin: 10px 0;
 }
-@media (max-width: 360px) {
+
+@media (max-width: 560px) {
     .tarjetas, .tarjetas-ataques {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 300px) {
+    #ver-mapa div {
+        display: flex;
+        align-items: center;
         flex-direction: column;
     }
 }
